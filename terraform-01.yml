@@ -73,6 +73,7 @@ stages:
             provider: 'azurerm'
             command: 'init'
             workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
+            commandOptions: '-upgrade'
             backendAzureRmUseEnvironmentVariablesForAuthentication: false
             backendAzureRmUseEntraIdForAuthentication: false
             backendServiceArm: 'terraform-aks-azurerm-szc-con'
@@ -119,7 +120,7 @@ stages:
                     provider: 'azurerm'
                     command: 'init'
                     workingDirectory: '$(Pipeline.Workspace)/terraform-manifests-out'
-                    commandOptions: '-reconfigure'
+                    commandOptions: '-upgrade'
                     backendServiceArm: 'terraform-aks-azurerm-szc-con'
                     backendAzureRmResourceGroupName: 'RG_AKS_project'
                     backendAzureRmStorageAccountName: 'stracctaksproject'
