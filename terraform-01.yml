@@ -90,7 +90,7 @@ stages:
                     provider: 'azurerm'
                     command: 'init'
                     workingDirectory: '$(Pipeline.Workspace)/terraform-manifests-out'
-                    commandOptions: '- upgrade'
+                    commandOptions: '- reconfigure'
                     backendServiceArm: 'terraform-aks-azurerm-szc-con'
                     backendAzureRmResourceGroupName: 'RG_AKS_project'
                     backendAzureRmStorageAccountName: 'stracctaksproject'
