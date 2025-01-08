@@ -17,6 +17,33 @@ variables:
 # Stage-1: Terraform Validate Stage
 ## Step-1: Publish Artifacts to Pipeline (Pipeline artifacts provide a way to share files between stages in a pipeline or between different pipelines. )
 stages:
+  - stage: Setup
+    jobs:
+      - job: RegisterProvider
+        displayName: Register Container Services
+        steps:
+        - task: AzureCLI@2
+          displayName: 'Register Microsoft.ContainerService'
+          inputs:
+            azureSubscription: 'terraform-aks-azurerm-szc-con'
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: 'az provider register --namespace Microsoft.ContainerService'
+
+        - task: AzureCLI@2
+          displayName: 'Verify Registration'
+          inputs:
+            azureSubscription: 'terraform-aks-azurerm-szc-con'
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
+              status=$(az provider show --namespace Microsoft.ContainerService --query "registrationState" -o tsv)
+              if [ "$status" != "Registered" ]; then
+                echo "Microsoft.ContainerService is not registered. Exiting."
+                exit 1
+              fi
+
+
   - stage: TerraformValidate
     jobs:
       - job: TerraformValidateJob
