@@ -1,0 +1,52 @@
+
+
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+# Stage-1: Terraform Validate Stage
+## Step-1: Publish Artifacts to Pipeline (Pipeline artifacts provide a way to share files between stages in a pipeline or between different pipelines. )
+stages:
+  - stage: TerraformValidate
+    jobs:
+      - job: TerraformValidateJob
+        continueOnError: false
+        steps:
+        - task: PublishPipelineArtifact@1
+          displayName: Publish Artifacts
+          inputs:
+            targetPath: '$(System.DefaultWorkingDirectory)/terraform-manifests'
+            artifact: 'terraform-manifests-out'
+            publishLocation: 'pipeline'
+
+## Step-2: Install Latest Terraform (0.13.5) (Ideally not needed if we use default Ubuntu Agents)
+
+        - task: TerraformInstaller@1
+          displayName: Install Terraform
+          inputs:
+            terraformVersion: 'latest'
+
+
+## Step-3: Validate Terraform Manifests (terraform init, terraform validate)
+        - task: TerraformTaskV4@4
+          displayName: Terraform Init
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
+            backendAzureRmUseEnvironmentVariablesForAuthentication: false
+            backendAzureRmUseEntraIdForAuthentication: false
+            backendServiceArm: 'terraform-aks-azurerm-szc-con'
+            backendAzureRmResourceGroupName: 'RG_AKS_project'
+            backendAzureRmStorageAccountName: 'stracctaksproject'
+            backendAzureRmContainerName: 'strgterraform'
+            backendAzureRmKey: 'aks-base-tfst'
+            
+        - task: TerraformTaskV4@4
+          displayName: Terraform Validate
+          inputs:
+            provider: 'azurerm'
+            command: 'validate'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/terraform-manifests'
