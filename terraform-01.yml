@@ -37,11 +37,13 @@ stages:
             scriptType: 'batch'
             scriptLocation: 'inlineScript'
             inlineScript: |
-              status=$(az provider show --namespace Microsoft.ContainerService --query "registrationState" -o tsv)
-              if [ "$status" != "Registered" ]; then
-                echo "Microsoft.ContainerService is not registered. Exiting."
-                exit 1
-              fi
+              az provider register --namespace Microsoft.ContainerService
+                    FOR /F "tokens=* USEBACKQ" %%F IN (`az provider show --namespace Microsoft.ContainerService --query "registrationState" -o tsv`) DO SET status=%%F
+                    IF NOT "%status%" == "Registered" (
+                        echo "Registration failed or incomplete. Current status: %status%"
+                        EXIT /B 1
+                    )
+                    echo "Microsoft.ContainerService is registered successfully."
 
 
   - stage: TerraformValidate
