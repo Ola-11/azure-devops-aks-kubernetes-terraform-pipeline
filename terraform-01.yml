@@ -26,7 +26,7 @@ stages:
           displayName: 'Register Microsoft.ContainerService'
           inputs:
             azureSubscription: 'terraform-aks-azurerm-szc-con'
-            scriptType: 'bash'
+            scriptType: 'batch'
             scriptLocation: 'inlineScript'
             inlineScript: 'az provider register --namespace Microsoft.ContainerService'
 
@@ -34,7 +34,7 @@ stages:
           displayName: 'Verify Registration'
           inputs:
             azureSubscription: 'terraform-aks-azurerm-szc-con'
-            scriptType: 'bash'
+            scriptType: 'batch'
             scriptLocation: 'inlineScript'
             inlineScript: |
               status=$(az provider show --namespace Microsoft.ContainerService --query "registrationState" -o tsv)
