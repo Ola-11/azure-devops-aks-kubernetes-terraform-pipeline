@@ -10,7 +10,7 @@ pool:
 variables:
 - name: DEV_ENVIRONMENT
   value: dev
-- name: QA_ENVIROMENT
+- name: QA_ENVIRONMENT
   value: qa
 
 
